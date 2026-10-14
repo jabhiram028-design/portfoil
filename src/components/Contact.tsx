@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from './icons/SocialIcons';
 import { portfolioConfig } from '../data/portfolioData';
+import { submitContactMessage } from '../lib/supabase';
 
 export const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +24,7 @@ export const Contact: React.FC = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   const validate = () => {
@@ -48,18 +50,25 @@ export const Contact: React.FC = () => {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validate()) return;
 
     setIsSubmitting(true);
+    setSubmitError(null);
 
-    // Simulate sending with realistic feedback
-    setTimeout(() => {
-      setIsSubmitting(false);
+    const result = await submitContactMessage(formData);
+
+    setIsSubmitting(false);
+
+    if (result.success) {
       setIsSubmitted(true);
-    }, 800);
+    } else {
+      setSubmitError(
+        result.error || 'Failed to send message. Please try again or reach out directly via email.'
+      );
+    }
   };
 
   const handleReset = () => {
@@ -70,6 +79,7 @@ export const Contact: React.FC = () => {
       message: '',
     });
     setErrors({});
+    setSubmitError(null);
     setIsSubmitted(false);
   };
 
@@ -232,6 +242,13 @@ export const Contact: React.FC = () => {
                     <h3 className="text-lg font-bold text-white">Send a Message</h3>
                     <span className="text-xs font-mono text-gray-400">* Required fields</span>
                   </div>
+
+                  {submitError && (
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                      <span>{submitError}</span>
+                    </div>
+                  )}
 
                   {/* Name Input */}
                   <div className="space-y-1.5 text-left">
