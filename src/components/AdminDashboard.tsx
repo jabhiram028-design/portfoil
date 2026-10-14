@@ -16,13 +16,17 @@ import {
   Eye,
   EyeOff,
   Clock,
-  Send
+  Send,
+  Info,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 import {
   supabase,
   supabaseUrl,
   isSupabaseConfigured,
+  supabaseEnvDiagnostics,
   fetchContactMessages,
   updateMessageReadStatus,
   deleteContactMessage,
@@ -56,6 +60,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
   const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'read'>('all');
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
 
   // Initialize auth check and listen to auth changes
   useEffect(() => {
@@ -380,6 +385,70 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                   <p className="text-[10px] text-gray-500 font-mono pt-1 border-t border-white/5">
                     Connected to: {supabaseUrl}
                   </p>
+                </div>
+
+                {/* Safe Environment Diagnostics (Never reveals secrets) */}
+                <div className="rounded-xl border border-white/10 bg-black/30 overflow-hidden text-left">
+                  <button
+                    type="button"
+                    onClick={() => setShowDiagnostics(!showDiagnostics)}
+                    className="w-full px-3.5 py-2.5 flex items-center justify-between text-xs text-gray-400 hover:text-white transition-colors cursor-pointer"
+                  >
+                    <span className="inline-flex items-center gap-1.5 font-medium">
+                      <Info className="w-3.5 h-3.5 text-purple-400" />
+                      <span>Configuration Diagnostics</span>
+                    </span>
+                    {showDiagnostics ? (
+                      <ChevronUp className="w-3.5 h-3.5 text-gray-400" />
+                    ) : (
+                      <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                    )}
+                  </button>
+
+                  {showDiagnostics && (
+                    <div className="p-3.5 pt-1 space-y-2 text-[11px] font-mono border-t border-white/5 text-gray-300">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Project Host:</span>
+                        <span className="text-purple-300">{supabaseEnvDiagnostics.urlHost}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">URL Source:</span>
+                        <span className="text-gray-300">{supabaseEnvDiagnostics.urlSource}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">API Key Status:</span>
+                        <span
+                          className={
+                            supabaseEnvDiagnostics.isConfigured
+                              ? 'text-emerald-400 font-semibold'
+                              : 'text-amber-400 font-semibold'
+                          }
+                        >
+                          {supabaseEnvDiagnostics.isConfigured ? 'Configured' : 'Missing'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Key Type:</span>
+                        <span className="text-gray-300">{supabaseEnvDiagnostics.keyType}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Key Variable:</span>
+                        <span className="text-purple-300">{supabaseEnvDiagnostics.keySource}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Key Length:</span>
+                        <span className="text-gray-300">{supabaseEnvDiagnostics.keyLength} chars</span>
+                      </div>
+                      {supabaseEnvDiagnostics.quotesStripped && (
+                        <div className="text-[10px] text-emerald-400/90 font-sans pt-1 border-t border-white/5">
+                          ✓ Accidental quotes around your key were detected and automatically stripped.
+                        </div>
+                      )}
+                      <div className="text-[10px] text-gray-500 font-sans pt-1 border-t border-white/5">
+                        Note: Actual API keys and passwords are never displayed or logged for security.
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,29 +1,81 @@
 import { createClient, type User } from '@supabase/supabase-js';
 
-// Read Vite environment variables
-const rawSupabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const rawSupabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+/**
+ * Sanitizes environment variable values by trimming whitespace and
+ * stripping any accidental surrounding double quotes or single quotes.
+ */
+function sanitizeEnvValue(val?: unknown): string {
+  if (!val || typeof val !== 'string') return '';
+  return val.trim().replace(/^["']|["']$/g, '').trim();
+}
 
-// Fallback to default project URL if not provided
+// Check for variable across standard conventions (Vite, Next.js, and Supabase CLI)
+const rawUrl =
+  import.meta.env.VITE_SUPABASE_URL ||
+  import.meta.env.NEXT_PUBLIC_SUPABASE_URL ||
+  import.meta.env.SUPABASE_URL;
+
+const rawKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  import.meta.env.SUPABASE_ANON_KEY;
+
+// Sanitize URL and Key
+const cleanUrl = sanitizeEnvValue(rawUrl);
+const cleanKey = sanitizeEnvValue(rawKey);
+
 export const supabaseUrl = (
-  rawSupabaseUrl && typeof rawSupabaseUrl === 'string' && rawSupabaseUrl.trim() !== ''
-    ? rawSupabaseUrl.trim()
+  cleanUrl && cleanUrl.length > 0
+    ? cleanUrl
     : 'https://lqdyosgevaoghvjzclyl.supabase.co'
-).replace(/\/+$/, ''); // Remove trailing slashes if any
+).replace(/\/+$/, '');
 
-export const supabaseAnonKey = (
-  rawSupabaseAnonKey && typeof rawSupabaseAnonKey === 'string'
-    ? rawSupabaseAnonKey.trim()
-    : ''
-);
+export const supabaseAnonKey = cleanKey;
 
-// Determine if a real API key is configured
+// Check if key is validly configured
 export const isSupabaseConfigured = Boolean(
   supabaseAnonKey &&
   supabaseAnonKey !== 'your_supabase_anon_public_key_here' &&
   supabaseAnonKey !== 'placeholder-anon-key' &&
-  supabaseAnonKey.length > 10
+  supabaseAnonKey.length > 15
 );
+
+// Determine which environment variable source provided the values (for safe diagnostics)
+export const supabaseEnvDiagnostics = {
+  isConfigured: isSupabaseConfigured,
+  urlHost: (() => {
+    try {
+      return new URL(supabaseUrl).host;
+    } catch {
+      return 'invalid-url';
+    }
+  })(),
+  urlSource: import.meta.env.VITE_SUPABASE_URL
+    ? 'VITE_SUPABASE_URL'
+    : import.meta.env.NEXT_PUBLIC_SUPABASE_URL
+    ? 'NEXT_PUBLIC_SUPABASE_URL'
+    : import.meta.env.SUPABASE_URL
+    ? 'SUPABASE_URL'
+    : 'default_fallback',
+  keySource: import.meta.env.VITE_SUPABASE_ANON_KEY
+    ? 'VITE_SUPABASE_ANON_KEY'
+    : import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    ? 'NEXT_PUBLIC_SUPABASE_ANON_KEY'
+    : import.meta.env.SUPABASE_ANON_KEY
+    ? 'SUPABASE_ANON_KEY'
+    : 'none',
+  keyType: !isSupabaseConfigured
+    ? ('missing' as const)
+    : supabaseAnonKey.startsWith('sb_publishable_') || supabaseAnonKey.startsWith('sbp_')
+    ? ('publishable' as const)
+    : supabaseAnonKey.startsWith('eyJ')
+    ? ('jwt_anon' as const)
+    : ('custom' as const),
+  keyLength: supabaseAnonKey ? supabaseAnonKey.length : 0,
+  quotesStripped: Boolean(
+    typeof rawKey === 'string' && (/^["']/.test(rawKey.trim()) || /["']$/.test(rawKey.trim()))
+  ),
+};
 
 // Initialize Supabase client
 export const supabase = createClient(
@@ -49,7 +101,7 @@ export function formatSupabaseError(errorMsg?: string): string {
 
   const lower = errorMsg.toLowerCase();
   if (lower.includes('invalid api key') || lower.includes('unauthorized_invalid_api_key')) {
-    return 'Invalid Supabase API key. Please check your VITE_SUPABASE_ANON_KEY environment variable in Vercel Project Settings and trigger a redeploy.';
+    return 'Invalid Supabase API key. Please check your VITE_SUPABASE_ANON_KEY environment variable in Vercel Project Settings (ensure there are no quotes or spaces) and trigger a redeploy.';
   }
   if (lower.includes('invalid login credentials')) {
     return 'Invalid email or password. Please verify your credentials or create an admin user in Supabase Authentication.';
@@ -77,14 +129,13 @@ export async function submitContactMessage(messageData: {
 }): Promise<{ success: boolean; error?: string }> {
   if (!isSupabaseConfigured) {
     console.warn(
-      '[Supabase Warning] VITE_SUPABASE_ANON_KEY is not configured. Submission saved in local console only:',
+      '[Supabase Warning] API key is not configured in environment variables. Submission:',
       messageData
     );
-    // Return friendly error so visitors and admins know why message didn't save to the live database
     return {
       success: false,
       error:
-        'The contact form is currently in offline mode because VITE_SUPABASE_ANON_KEY is not configured in environment variables.',
+        'Database connection is not configured yet. Please configure VITE_SUPABASE_ANON_KEY on Vercel or email directly.',
     };
   }
 
@@ -122,7 +173,7 @@ export async function fetchContactMessages(): Promise<{
     return {
       data: [],
       error:
-        'Supabase is not configured. Please add VITE_SUPABASE_ANON_KEY to your environment variables (e.g. in Vercel Project Settings) and redeploy.',
+        'Supabase is not configured. Please add VITE_SUPABASE_ANON_KEY to your Vercel Project Settings and redeploy.',
     };
   }
 
