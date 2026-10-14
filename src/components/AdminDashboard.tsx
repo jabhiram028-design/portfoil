@@ -12,6 +12,7 @@ import {
   Lock,
   Inbox,
   AlertCircle,
+  AlertTriangle,
   Eye,
   EyeOff,
   Clock,
@@ -20,6 +21,8 @@ import {
 import type { User } from '@supabase/supabase-js';
 import {
   supabase,
+  supabaseUrl,
+  isSupabaseConfigured,
   fetchContactMessages,
   updateMessageReadStatus,
   deleteContactMessage,
@@ -285,10 +288,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                   </p>
                 </div>
 
+                {!isSupabaseConfigured && (
+                  <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 space-y-2 text-left">
+                    <div className="flex items-center gap-2 font-semibold text-amber-300">
+                      <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                      <span>Missing Supabase API Key (Vercel / Local)</span>
+                    </div>
+                    <p className="text-[11px] leading-relaxed text-amber-100/90">
+                      The environment variable <code className="px-1.5 py-0.5 rounded bg-black/40 font-mono text-purple-300">VITE_SUPABASE_ANON_KEY</code> is not set in this deployment.
+                    </p>
+                    <p className="text-[11px] leading-relaxed text-gray-300">
+                      In <strong>Vercel Project Settings &rarr; Environment Variables</strong>, add <code className="px-1.5 py-0.5 rounded bg-black/40 font-mono text-purple-300">VITE_SUPABASE_ANON_KEY</code> and <code className="px-1.5 py-0.5 rounded bg-black/40 font-mono text-purple-300">VITE_SUPABASE_URL</code>, then redeploy.
+                    </p>
+                  </div>
+                )}
+
                 {loginError && (
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                    <span>{loginError}</span>
+                  <div className="p-3.5 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start gap-2.5 text-left">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                    <span className="leading-relaxed">{loginError}</span>
                   </div>
                 )}
 
@@ -350,7 +368,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                   </button>
                 </form>
 
-                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 text-[11px] text-gray-400 space-y-1.5">
+                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 text-[11px] text-gray-400 space-y-1.5 text-left">
                   <p className="font-semibold text-gray-300">Setting Up Admin Access:</p>
                   <p>
                     Create your admin user in your{' '}
@@ -358,6 +376,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose 
                       Supabase Dashboard &gt; Authentication &gt; Users &gt; Add User
                     </span>
                     . Once created, log in here to view live messages.
+                  </p>
+                  <p className="text-[10px] text-gray-500 font-mono pt-1 border-t border-white/5">
+                    Connected to: {supabaseUrl}
                   </p>
                 </div>
               </div>

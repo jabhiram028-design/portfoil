@@ -1,15 +1,34 @@
 import { createClient, type User } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://lqdyosgevaoghvjzclyl.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// Read Vite environment variables
+const rawSupabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const rawSupabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const isSupabaseConfigured = Boolean(
-  supabaseAnonKey && supabaseAnonKey !== 'your_supabase_anon_public_key_here'
+// Fallback to default project URL if not provided
+export const supabaseUrl = (
+  rawSupabaseUrl && typeof rawSupabaseUrl === 'string' && rawSupabaseUrl.trim() !== ''
+    ? rawSupabaseUrl.trim()
+    : 'https://lqdyosgevaoghvjzclyl.supabase.co'
+).replace(/\/+$/, ''); // Remove trailing slashes if any
+
+export const supabaseAnonKey = (
+  rawSupabaseAnonKey && typeof rawSupabaseAnonKey === 'string'
+    ? rawSupabaseAnonKey.trim()
+    : ''
 );
 
+// Determine if a real API key is configured
+export const isSupabaseConfigured = Boolean(
+  supabaseAnonKey &&
+  supabaseAnonKey !== 'your_supabase_anon_public_key_here' &&
+  supabaseAnonKey !== 'placeholder-anon-key' &&
+  supabaseAnonKey.length > 10
+);
+
+// Initialize Supabase client
 export const supabase = createClient(
   supabaseUrl,
-  supabaseAnonKey || 'placeholder-anon-key'
+  isSupabaseConfigured ? supabaseAnonKey : 'placeholder-anon-key'
 );
 
 export interface ContactMessageRecord {
@@ -23,6 +42,31 @@ export interface ContactMessageRecord {
 }
 
 /**
+ * Friendly error message formatter for Supabase responses
+ */
+export function formatSupabaseError(errorMsg?: string): string {
+  if (!errorMsg) return 'An unexpected error occurred.';
+
+  const lower = errorMsg.toLowerCase();
+  if (lower.includes('invalid api key') || lower.includes('unauthorized_invalid_api_key')) {
+    return 'Invalid Supabase API key. Please check your VITE_SUPABASE_ANON_KEY environment variable in Vercel Project Settings and trigger a redeploy.';
+  }
+  if (lower.includes('invalid login credentials')) {
+    return 'Invalid email or password. Please verify your credentials or create an admin user in Supabase Authentication.';
+  }
+  if (lower.includes('email not confirmed')) {
+    return 'Email address is not confirmed. In Supabase Dashboard > Authentication > Users, check "Auto Confirm User" or confirm your email.';
+  }
+  if (lower.includes('relation "public.contact_messages" does not exist') || lower.includes('table not found')) {
+    return 'Database table "contact_messages" does not exist. Please run the script in supabase/schema.sql in your Supabase SQL Editor.';
+  }
+  if (lower.includes('permission denied') || lower.includes('violates row-level security policy')) {
+    return 'Access blocked by database security (RLS). Please verify policies in supabase/schema.sql have been applied.';
+  }
+  return errorMsg;
+}
+
+/**
  * Public: Submit a message from the portfolio contact form
  */
 export async function submitContactMessage(messageData: {
@@ -33,10 +77,15 @@ export async function submitContactMessage(messageData: {
 }): Promise<{ success: boolean; error?: string }> {
   if (!isSupabaseConfigured) {
     console.warn(
-      'Supabase anon key is not configured in .env. Message saved locally in console:',
+      '[Supabase Warning] VITE_SUPABASE_ANON_KEY is not configured. Submission saved in local console only:',
       messageData
     );
-    return { success: true };
+    // Return friendly error so visitors and admins know why message didn't save to the live database
+    return {
+      success: false,
+      error:
+        'The contact form is currently in offline mode because VITE_SUPABASE_ANON_KEY is not configured in environment variables.',
+    };
   }
 
   try {
@@ -51,14 +100,14 @@ export async function submitContactMessage(messageData: {
 
     if (error) {
       console.error('Error inserting message into Supabase:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: formatSupabaseError(error.message) };
     }
 
     return { success: true };
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
     console.error('Unexpected error inserting message:', err);
-    return { success: false, error: errorMessage };
+    return { success: false, error: formatSupabaseError(errorMessage) };
   }
 }
 
@@ -72,7 +121,8 @@ export async function fetchContactMessages(): Promise<{
   if (!isSupabaseConfigured) {
     return {
       data: [],
-      error: 'Supabase is not configured. Please add your credentials to .env',
+      error:
+        'Supabase is not configured. Please add VITE_SUPABASE_ANON_KEY to your environment variables (e.g. in Vercel Project Settings) and redeploy.',
     };
   }
 
@@ -84,13 +134,13 @@ export async function fetchContactMessages(): Promise<{
 
     if (error) {
       console.error('Error fetching messages:', error);
-      return { data: [], error: error.message };
+      return { data: [], error: formatSupabaseError(error.message) };
     }
 
     return { data: (data as ContactMessageRecord[]) || [] };
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Failed to fetch messages';
-    return { data: [], error: errorMessage };
+    return { data: [], error: formatSupabaseError(errorMessage) };
   }
 }
 
@@ -101,6 +151,10 @@ export async function updateMessageReadStatus(
   id: string,
   isRead: boolean
 ): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured) {
+    return { success: false, error: 'Supabase is not configured.' };
+  }
+
   try {
     const { error } = await supabase
       .from('contact_messages')
@@ -108,12 +162,12 @@ export async function updateMessageReadStatus(
       .eq('id', id);
 
     if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: formatSupabaseError(error.message) };
     }
     return { success: true };
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Failed to update message';
-    return { success: false, error: errorMessage };
+    return { success: false, error: formatSupabaseError(errorMessage) };
   }
 }
 
@@ -123,6 +177,10 @@ export async function updateMessageReadStatus(
 export async function deleteContactMessage(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured) {
+    return { success: false, error: 'Supabase is not configured.' };
+  }
+
   try {
     const { error } = await supabase
       .from('contact_messages')
@@ -130,22 +188,30 @@ export async function deleteContactMessage(
       .eq('id', id);
 
     if (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: formatSupabaseError(error.message) };
     }
     return { success: true };
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Failed to delete message';
-    return { success: false, error: errorMessage };
+    return { success: false, error: formatSupabaseError(errorMessage) };
   }
 }
 
 /**
- * Admin Auth Helpers
+ * Admin Auth: Sign in with email and password
  */
 export async function signInAdmin(
   email: string,
   pass: string
 ): Promise<{ user: User | null; error?: string }> {
+  if (!isSupabaseConfigured) {
+    return {
+      user: null,
+      error:
+        'Supabase API key is missing. Please configure VITE_SUPABASE_ANON_KEY in your environment variables (in Vercel: Project Settings → Environment Variables) and redeploy.',
+    };
+  }
+
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
@@ -153,27 +219,37 @@ export async function signInAdmin(
     });
 
     if (error) {
-      return { user: null, error: error.message };
+      return { user: null, error: formatSupabaseError(error.message) };
     }
     return { user: data.user };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Authentication failed';
-    return { user: null, error: msg };
+    return { user: null, error: formatSupabaseError(msg) };
   }
 }
 
+/**
+ * Admin Auth: Sign out
+ */
 export async function signOutAdmin(): Promise<{ error?: string }> {
   try {
     const { error } = await supabase.auth.signOut();
-    if (error) return { error: error.message };
+    if (error) return { error: formatSupabaseError(error.message) };
     return {};
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Sign out failed';
-    return { error: msg };
+    return { error: formatSupabaseError(msg) };
   }
 }
 
+/**
+ * Admin Auth: Get currently logged-in user
+ */
 export async function getAdminUser(): Promise<User | null> {
+  if (!isSupabaseConfigured) {
+    return null;
+  }
+
   try {
     const { data } = await supabase.auth.getUser();
     return data.user;
