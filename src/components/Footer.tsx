@@ -1,9 +1,13 @@
 import React from 'react';
-import { ArrowUp, Code2, Heart } from 'lucide-react';
+import { ArrowUp, Code2, Heart, Shield } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from './icons/SocialIcons';
 import { portfolioConfig } from '../data/portfolioData';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onOpenAdmin?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -88,7 +92,20 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-          <p>&copy; {portfolioConfig.copyrightYear} J. Abhiram. All rights reserved.</p>
+          <div className="flex items-center gap-3">
+            <p>&copy; {portfolioConfig.copyrightYear} J. Abhiram. All rights reserved.</p>
+            {onOpenAdmin && (
+              <button
+                type="button"
+                onClick={onOpenAdmin}
+                className="inline-flex items-center gap-1 text-[11px] text-gray-600 hover:text-purple-400 transition-colors cursor-pointer"
+                title="Open Admin Dashboard"
+              >
+                <Shield className="w-3 h-3" />
+                <span>Admin</span>
+              </button>
+            )}
+          </div>
           <div className="flex items-center gap-1.5 text-gray-400">
             <span>Built with React, Vite &amp; Tailwind CSS</span>
             <Heart className="w-3 h-3 text-purple-400 fill-purple-400" />
