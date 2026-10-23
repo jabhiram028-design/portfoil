@@ -12,6 +12,7 @@ export const portfolioConfig = {
     'Hi, I am J. Abhiram. I am at the beginning of my web development journey, excited to learn new technologies and create websites that are useful, attractive, and easy to use. I believe every project is an opportunity to learn, experiment, solve problems, and improve my skills.',
   contactEmail: 'abhiram.dev@example.com', // Editable placeholder
   githubUrl: 'https://github.com/abhiram-dev', // Editable placeholder
+  linkedinUrl: 'https://www.linkedin.com/in/abhiram-j-7330603a8/',
   copyrightYear: '2026',
 };
 
