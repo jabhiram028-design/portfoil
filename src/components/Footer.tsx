@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowUp, Code2, Heart, Shield } from 'lucide-react';
-import { GithubIcon, LinkedinIcon } from './icons/SocialIcons';
+import { GithubIcon } from './icons/SocialIcons';
 import { portfolioConfig } from '../data/portfolioData';
 
 interface FooterProps {
@@ -28,7 +28,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
     <footer className="bg-[#02050E] text-gray-400 border-t border-white/5 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-8 border-b border-white/5">
-          {/* Brand Logo & Statement */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white">
@@ -43,7 +42,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             </p>
           </div>
 
-          {/* Quick Navigation Links */}
           <nav className="flex flex-wrap items-center justify-center gap-6 text-xs font-medium">
             {navLinks.map((link) => (
               <a
@@ -56,7 +54,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             ))}
           </nav>
 
-          {/* Social Links & Back to Top */}
           <div className="flex items-center gap-3">
             <a
               href={portfolioConfig.githubUrl}
@@ -66,16 +63,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
               aria-label="GitHub Profile"
             >
               <GithubIcon className="w-4 h-4" />
-            </a>
-
-            <a
-              href={portfolioConfig.linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/30 flex items-center justify-center text-gray-300 hover:text-white transition-colors"
-              aria-label="LinkedIn Profile"
-            >
-              <LinkedinIcon className="w-4 h-4" />
             </a>
 
             <button
@@ -90,7 +77,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
           </div>
         </div>
 
-        {/* Bottom Copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
           <div className="flex items-center gap-3">
             <p>&copy; {portfolioConfig.copyrightYear} J. Abhiram. All rights reserved.</p>
