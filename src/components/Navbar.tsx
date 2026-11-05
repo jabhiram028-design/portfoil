@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowUpRight, Code2 } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Code2, MessageCircle } from 'lucide-react';
 
 interface NavbarProps {
   onConnectClick?: () => void;
@@ -98,7 +98,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onConnectClick }) => {
           </nav>
 
           {/* Desktop Right CTA */}
-          <div className="hidden lg:flex items-center">
+          <div className="hidden lg:flex items-center gap-3">
+            <a
+              href="https://wa.me/919014441204"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/10 transition-colors"
+              aria-label="Chat with Abhiram on WhatsApp"
+            >
+              <MessageCircle className="w-4 h-4" />
+              WhatsApp
+            </a>
             <a
               href="#contact"
               onClick={(e) => {
@@ -149,7 +159,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onConnectClick }) => {
                 </a>
               );
             })}
-            <div className="pt-3 mt-2 border-t border-white/10">
+            <div className="pt-3 mt-2 border-t border-white/10 space-y-2">
+              <a
+                href="https://wa.me/919014441204"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg text-base font-medium text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/10 transition-colors"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Chat on WhatsApp
+              </a>
               <a
                 href="#contact"
                 onClick={(e) => {
