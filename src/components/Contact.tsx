@@ -37,9 +37,9 @@ export const Contact: React.FC = () => {
     }
 
     if (!formData.email.trim()) {
-      errs.email = 'Please provide your email address.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errs.email = 'Please enter a valid email address.';
+      errs.email = 'Please provide your WhatsApp number.';
+    } else if (!/^\\+?[0-9\\s()-]{10,18}$/.test(formData.email.trim())) {
+      errs.email = 'Please enter a valid WhatsApp number.';
     }
 
     if (!formData.message.trim()) {
@@ -308,21 +308,21 @@ export const Contact: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Email Input */}
+                  {/* WhatsApp Number Input */}
                   <div className="space-y-1.5 text-left">
-                    <label htmlFor="email" className="block text-xs font-medium text-gray-300">
-                      Email Address <span className="text-purple-400">*</span>
+                    <label htmlFor="whatsapp" className="block text-xs font-medium text-gray-300">
+                      WhatsApp Number <span className="text-purple-400">*</span>
                     </label>
                     <input
-                      type="email"
-                      id="email"
-                      name="email"
+                      type="tel"
+                      id="whatsapp"
+                      name="whatsapp"
                       value={formData.email}
                       onChange={(e) => {
                         setFormData({ ...formData, email: e.target.value });
                         if (errors.email) setErrors({ ...errors, email: '' });
                       }}
-                      placeholder="e.g. alex@example.com"
+                      placeholder="e.g. +91 90144 41204"
                       className={`w-full px-4 py-2.5 rounded-lg bg-[#070A12] border text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all ${
                         errors.email ? 'border-red-500/60' : 'border-white/10 focus:border-purple-500'
                       }`}
