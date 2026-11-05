@@ -43,14 +43,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onConnectClick }) => {
     { name: 'Contact', href: '#contact' },
   ];
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
+  // Let the browser handle native hash navigation so links also work reliably
+  // with keyboard navigation, direct URLs, and browser history.
+  const handleLinkClick = (_e: React.MouseEvent<HTMLAnchorElement>, _href: string) => {
     setMobileMenuOpen(false);
-    const targetId = href.replace('#', '');
-    const element = document.getElementById(targetId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
   };
 
   return (
