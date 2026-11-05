@@ -7,7 +7,9 @@ import {
   Copy,
   Check,
   ExternalLink,
-  MessageSquare
+  MessageSquare,
+  Phone,
+  MessageCircle
 } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from './icons/SocialIcons';
 import { portfolioConfig } from '../data/portfolioData';
@@ -152,6 +154,35 @@ export const Contact: React.FC = () => {
                 <span>{portfolioConfig.contactEmail}</span>
                 <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </a>
+            </div>
+
+            {/* Phone and WhatsApp Contact */}
+            <div className="rounded-2xl p-6 bg-[#0B0F19]/90 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4">
+                <Phone className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-1">Call or WhatsApp</h3>
+              <p className="text-xs text-gray-400 mb-4">
+                Reach me directly at +91 90144 41204.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="tel:+919014441204"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/10 transition-colors"
+                >
+                  <Phone className="w-4 h-4" />
+                  Call Now
+                </a>
+                <a
+                  href="https://wa.me/919014441204"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  WhatsApp
+                </a>
+              </div>
             </div>
 
             {/* Social Profiles Grid */}
