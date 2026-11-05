@@ -6,6 +6,11 @@
     color-scheme: dark;
   }
 
+  /* Keep anchored sections visible below the fixed navigation bar. */
+  section[id] {
+    scroll-margin-top: 6.5rem;
+  }
+
   body {
     background-color: #030712;
     color: #f9fafb;
