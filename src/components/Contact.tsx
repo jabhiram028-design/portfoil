@@ -38,7 +38,7 @@ export const Contact: React.FC = () => {
 
     if (!formData.email.trim()) {
       errs.email = 'Please provide your WhatsApp number.';
-    } else if (!/^\\+?[0-9\\s()-]{10,18}$/.test(formData.email.trim())) {
+    } else if (!/^\+?[0-9\s()-]{10,18}$/.test(formData.email.trim())) {
       errs.email = 'Please enter a valid WhatsApp number.';
     }
 
