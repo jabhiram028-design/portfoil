@@ -11,7 +11,9 @@ export const portfolioConfig = {
   aboutDescription:
     'Hi, I am J. Abhiram. I am at the beginning of my web development journey, excited to learn new technologies and create websites that are useful, attractive, and easy to use. I believe every project is an opportunity to learn, experiment, solve problems, and improve my skills.',
   contactEmail: 'abhiram.dev@example.com', // Editable placeholder
-  githubUrl: 'https://github.com/abhiram-dev', // Editable placeholder
+  whatsappNumber: '90114441204',
+  whatsappUrl: 'https://wa.me/9190114441204?text=Hi%20Abhiram,%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20connect!',
+  githubUrl: 'https://github.com/jabhiram028-design/portfoil',
   linkedinUrl: 'https://www.linkedin.com/in/abhiram-j-7330603a8/',
   copyrightYear: '2026',
 };

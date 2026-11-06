@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUp, Code2, Heart, Shield } from 'lucide-react';
+import { ArrowUp, Code2, Heart, Shield, MessageCircle } from 'lucide-react';
 import { GithubIcon } from './icons/SocialIcons';
 import { portfolioConfig } from '../data/portfolioData';
 
@@ -63,6 +63,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
               aria-label="GitHub Profile"
             >
               <GithubIcon className="w-4 h-4" />
+            </a>
+
+            <a
+              href="https://wa.me/9190114441204?text=Hi%20Abhiram,%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20connect!"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 hover:border-emerald-500/40 flex items-center justify-center text-emerald-400 hover:text-emerald-300 transition-colors"
+              aria-label="WhatsApp"
+              title="Chat on WhatsApp"
+            >
+              <MessageCircle className="w-4 h-4" />
             </a>
 
             <button

@@ -100,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onConnectClick }) => {
           {/* Desktop Right CTA */}
           <div className="hidden lg:flex items-center gap-3">
             <a
-              href="https://wa.me/919014441204"
+              href="https://wa.me/9190114441204"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/10 transition-colors"
@@ -161,7 +161,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onConnectClick }) => {
             })}
             <div className="pt-3 mt-2 border-t border-white/10 space-y-2">
               <a
-                href="https://wa.me/919014441204"
+                href="https://wa.me/9190114441204"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg text-base font-medium text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/10 transition-colors"

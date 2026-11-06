@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Mail,
   Send,
   CheckCircle2,
   AlertCircle,
@@ -27,7 +26,7 @@ export const Contact: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedWhatsApp, setCopiedWhatsApp] = useState(false);
 
   const validate = () => {
     const errs: { [key: string]: string } = {};
@@ -85,10 +84,10 @@ export const Contact: React.FC = () => {
     setIsSubmitted(false);
   };
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(portfolioConfig.contactEmail);
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2000);
+  const handleCopyWhatsApp = () => {
+    navigator.clipboard.writeText("90114441204");
+    setCopiedWhatsApp(true);
+    setTimeout(() => setCopiedWhatsApp(false), 2000);
   };
 
   return (
@@ -116,19 +115,19 @@ export const Contact: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Left Column: Direct Contact & Social Cards */}
           <div className="lg:col-span-5 space-y-5">
-            {/* Direct Email Card */}
-            <div className="rounded-2xl p-6 bg-[#0B0F19]/90 border border-purple-500/20 hover:border-purple-500/40 transition-colors">
+            {/* Direct WhatsApp Card */}
+            <div className="rounded-2xl p-6 bg-[#0B0F19]/90 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors shadow-lg shadow-emerald-950/20">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-                  <Mail className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <MessageCircle className="w-6 h-6" />
                 </div>
                 <button
                   type="button"
-                  onClick={handleCopyEmail}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono text-purple-300 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors cursor-pointer"
-                  title="Copy email to clipboard"
+                  onClick={handleCopyWhatsApp}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono text-emerald-300 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors cursor-pointer"
+                  title="Copy WhatsApp number"
                 >
-                  {copiedEmail ? (
+                  {copiedWhatsApp ? (
                     <>
                       <Check className="w-3.5 h-3.5 text-emerald-400" />
                       <span>Copied</span>
@@ -136,54 +135,37 @@ export const Contact: React.FC = () => {
                   ) : (
                     <>
                       <Copy className="w-3.5 h-3.5" />
-                      <span>Copy Email</span>
+                      <span>Copy Number</span>
                     </>
                   )}
                 </button>
               </div>
 
-              <h3 className="text-lg font-bold text-white mb-1">Direct Email</h3>
-              <p className="text-xs text-gray-400 mb-3">
-                Send me a note anytime. I check my messages regularly.
-              </p>
-
-              <a
-                href={`mailto:${portfolioConfig.contactEmail}`}
-                className="inline-flex items-center gap-2 text-sm font-mono text-purple-300 hover:text-purple-200 transition-colors group"
-              >
-                <span>{portfolioConfig.contactEmail}</span>
-                <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-              </a>
-            </div>
-
-            {/* Phone and WhatsApp Contact */}
-            <div className="rounded-2xl p-6 bg-[#0B0F19]/90 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors">
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4">
-                <Phone className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-white mb-1">Call or WhatsApp</h3>
+              <h3 className="text-lg font-bold text-white mb-1">Direct WhatsApp</h3>
               <p className="text-xs text-gray-400 mb-4">
-                Reach me directly at +91 90144 41204.
+                Message me directly on WhatsApp at +91 90114 41204 for quick responses.
               </p>
+
               <div className="flex flex-wrap gap-3">
                 <a
-                  href="tel:+919014441204"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/10 transition-colors"
+                  href="https://wa.me/9190114441204?text=Hi%20Abhiram,%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20connect!"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 transition-colors shadow-md shadow-emerald-900/30"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Chat on WhatsApp
+                </a>
+                <a
+                  href="tel:+9190114441204"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/10 transition-colors"
                 >
                   <Phone className="w-4 h-4" />
                   Call Now
                 </a>
-                <a
-                  href="https://wa.me/919014441204"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 transition-colors"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  WhatsApp
-                </a>
               </div>
             </div>
+            
 
             {/* Social Profiles Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -322,7 +304,7 @@ export const Contact: React.FC = () => {
                         setFormData({ ...formData, email: e.target.value });
                         if (errors.email) setErrors({ ...errors, email: '' });
                       }}
-                      placeholder="e.g. +91 90144 41204"
+                      placeholder="e.g. +91 90114 41204"
                       className={`w-full px-4 py-2.5 rounded-lg bg-[#070A12] border text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all ${
                         errors.email ? 'border-red-500/60' : 'border-white/10 focus:border-purple-500'
                       }`}
