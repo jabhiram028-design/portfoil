@@ -8,6 +8,7 @@ import { LearningJourney } from './components/LearningJourney';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { AdminDashboard } from './components/AdminDashboard';
+import { ElevenLabsWidget } from './components/ElevenLabsWidget';
 
 export const App: React.FC = () => {
   const [isAdminOpen, setIsAdminOpen] = useState(
@@ -67,6 +68,9 @@ export const App: React.FC = () => {
 
       {/* Admin Dashboard Modal / Overlay */}
       <AdminDashboard isOpen={isAdminOpen} onClose={handleCloseAdmin} />
+
+      {/* Floating ElevenLabs AI voice and chat assistant */}
+      <ElevenLabsWidget />
     </div>
   );
 };
